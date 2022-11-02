@@ -38,40 +38,63 @@ class Graph(object):
         return self.graph[node1][node2]
 
 
-def pathfinding(graph, startNode):
-    nodesToVisit = deque()
-
-    visitedNode = []
-
-    shortestPath = {}
-    prev = {}
-
-    maxVal = sys.maxsize
-    for node in graph.getNodes():
-        shortestPath[node] = maxVal
-
-    shortestPath[startNode] = 0
-
-    nodesToVisit.append(startNode)
-
-    while nodesToVisit:
-        currentNode = nodesToVisit.popleft()
-
-        visitedNode.append(currentNode)
-        edges = graph.getNeighbors(currentNode)
-
-        for edge in edges:
-            if edge not in visitedNode:
-
-                nodesToVisit.append(edge)
-
-                if graph.edgeValue(edge, currentNode) + shortestPath[currentNode] < shortestPath[edge]:
-                    shortestPath[edge] = graph.edgeValue(edge, currentNode) + shortestPath[currentNode]
-                    prev[edge] = currentNode
-
-    return shortestPath, prev
-
-
 class FindPath(object):
-    def __init__(self, graph, startNode):
-        self.shortestPaths, self.traceback = pathfinding(graph, startNode)
+    def __init__(self, graph, startNode=None):
+        self.startNode = startNode
+        self.graph = graph
+        self.startNode = startNode
+
+        self.shortestPaths, self.traceback = None, None
+
+    def traverseBack(self, destinationNode):
+        if self.traceback is None:
+            print("Pathfinding function has not run, attempting to run it now")
+            self.pathfinding()
+
+        path = [destinationNode]
+
+        while self.traceback[destinationNode] is not self.startNode:
+            destinationNode = self.traceback[destinationNode]
+            path.append(destinationNode)
+
+        path.append(self.startNode)
+
+        return path[::-1]
+
+    def pathfinding(self, startNode=None):
+        if startNode is not None:
+            self.startNode = startNode
+        elif startNode is None and self.startNode is None:
+            return "Error, no start node defined"
+
+        nodesToVisit = deque()
+
+        visitedNode = []
+
+        shortestPath = {}
+        self.traceback = {}
+
+        maxVal = sys.maxsize
+        for node in self.graph.getNodes():
+            shortestPath[node] = maxVal
+
+        shortestPath[self.startNode] = 0
+
+        nodesToVisit.append(self.startNode)
+
+        while nodesToVisit:
+            currentNode = nodesToVisit.popleft()
+
+            visitedNode.append(currentNode)
+            edges = self.graph.getNeighbors(currentNode)
+
+            for edge in edges:
+                if edge not in visitedNode:
+
+                    nodesToVisit.append(edge)
+
+                    if self.graph.edgeValue(edge, currentNode) + shortestPath[currentNode] < shortestPath[edge]:
+                        shortestPath[edge] = self.graph.edgeValue(edge, currentNode) + shortestPath[currentNode]
+                        self.traceback[edge] = currentNode
+
+        self.shortestPaths = shortestPath
