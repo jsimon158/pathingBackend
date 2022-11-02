@@ -3,6 +3,9 @@ from unittest import TestCase
 from pathfinding import Graph, FindPath
 
 
+# TODO: Add routing and add github actions build file
+
+
 class TestGraph(TestCase):
     nodes = ["test", "cat", "dog"]
     graphTest = {"test": {"cat": 5, "dog": 4}, "cat": {"dog": 1}, "dog": {}}
@@ -26,7 +29,6 @@ class TestGraph(TestCase):
 
 class TestFindPath(TestCase):
     def test_pathfindingBigGraph(self):
-
         nodes = ["0", "1", "2", "3", "4", "5", "6", "7", "8"]
         graphTest = {"0": {"1": 4, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 8, "8": 0},
                      "1": {"0": 4, "2": 8, "3": 0, "4": 0, "5": 0, "6": 0, "7": 11, "8": 0},
@@ -79,7 +81,6 @@ class TestFindPath(TestCase):
         graph = Graph(nodes, graphTest)
         findPath = FindPath(graph, "0")
         assert findPath.traverseBack("7") == ['0', '7']
-
 
     def test_failPathfinding(self):
         with self.assertRaises((TypeError, AttributeError)):
