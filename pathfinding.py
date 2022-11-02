@@ -1,3 +1,7 @@
+import sys
+from collections import deque
+
+
 class Graph(object):
 
     def __init__(self, nodes, graph):
@@ -33,3 +37,41 @@ class Graph(object):
     def edgeValue(self, node1, node2):
         return self.graph[node1][node2]
 
+
+def pathfinding(graph, startNode):
+    nodesToVisit = deque()
+
+    visitedNode = []
+
+    shortestPath = {}
+    prev = {}
+
+    maxVal = sys.maxsize
+    for node in graph.getNodes():
+        shortestPath[node] = maxVal
+
+    shortestPath[startNode] = 0
+
+    nodesToVisit.append(startNode)
+
+    while nodesToVisit:
+        currentNode = nodesToVisit.popleft()
+
+        visitedNode.append(currentNode)
+        edges = graph.getNeighbors(currentNode)
+
+        for edge in edges:
+            if edge not in visitedNode:
+
+                nodesToVisit.append(edge)
+
+                if graph.edgeValue(edge, currentNode) + shortestPath[currentNode] < shortestPath[edge]:
+                    shortestPath[edge] = graph.edgeValue(edge, currentNode) + shortestPath[currentNode]
+                    prev[edge] = currentNode
+
+    return shortestPath, prev
+
+
+class FindPath(object):
+    def __init__(self, graph, startNode):
+        self.shortestPaths, self.traceback = pathfinding(graph, startNode)
