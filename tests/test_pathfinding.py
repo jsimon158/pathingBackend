@@ -3,9 +3,6 @@ from unittest import TestCase
 from chalicelib.pathfinding import Graph, FindPath
 
 
-# TODO: Add routing and add github actions build file
-
-
 class TestGraph(TestCase):
     nodes = ["test", "cat", "dog"]
     graphTest = {"test": {"cat": 5, "dog": 4}, "cat": {"dog": 1}, "dog": {}}
