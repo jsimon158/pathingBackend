@@ -1,3 +1,1 @@
-pytest
-flask
-flask_restful
+chalice~=1.27.3

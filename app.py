@@ -1,5 +1,8 @@
-from flask_restful import Resource, reqparse
-from pathfinding import FindPath, Graph
+from chalice import Chalice
+
+from chalicelib.pathfinding import Graph, FindPath
+
+app = Chalice(app_name='pathing')
 
 mapTest = {"firstMap": {"0": {"1": 4, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7": 8, "8": 0},
                      "1": {"0": 4, "2": 8, "3": 0, "4": 0, "5": 0, "6": 0, "7": 11, "8": 0},
@@ -12,31 +15,25 @@ mapTest = {"firstMap": {"0": {"1": 4, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0, "7
                      "8": {"0": 0, "1": 0, "2": 2, "3": 0, "4": 0, "5": 0, "6": 6, "7": 7, }}
            }
 
-class PathfindingEndpoint(Resource):
 
-    def get(self):
-        return "Hello"
+@app.route('/pathfinding', methods=['POST'])
+def pathfinding():
+    inputs = app.current_request.json_body
 
+    currentLocation = inputs['currentLocation']
+    destinationLocation = inputs['destination']
 
-    def post(self):
-        parser = reqparse.RequestParser()
+    if currentLocation == destinationLocation:
+        return "DestinationSameAsCurrentLocation"
 
-        parser.add_argument('map', required=True)
-        parser.add_argument('currentLocation', required=True)
-        parser.add_argument('destination', required=True)
+    thisMap = inputs['map']
+    thisGraph = mapTest[thisMap]
 
-        # parse arguments to dictionary
-        args = parser.parse_args()
+    nodes = list(thisGraph.keys())
+    graph = Graph(nodes, thisGraph)
 
-        # map will be a key to an internal map ?
-        thisMap = args['map']
-        thisGraph = mapTest[thisMap]
+    findPath = FindPath(graph, currentLocation)
 
-        nodes = list(thisGraph.keys())
-        graph = Graph(nodes, thisGraph)
+    path = findPath.traverseBack(destinationLocation)
 
-        findPath = FindPath(graph, args['currentLocation'])
-
-        path = findPath.traverseBack(args['destination'])
-
-        return path
+    return path
