@@ -1,6 +1,6 @@
 from unittest import TestCase
 
-from pathfinding import Graph, FindPath
+from chalicelib.pathfinding import Graph, FindPath
 
 
 # TODO: Add routing and add github actions build file

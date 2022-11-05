@@ -1,3 +1,2 @@
+chalice~=1.27.3
 pytest
-flask
-flask_restful
